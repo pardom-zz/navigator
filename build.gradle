@@ -5,17 +5,41 @@ buildscript {
         androidMinSdkVersion = 16
         androidTargetSdkVersion = 26
         androidCompileSdkVersion = 26
-
+        androidTestInstrumentationRunner = "android.support.test.runner.AndroidJUnitRunner"
+        ////////////////////////////////////////////////////////////////////////////////////////////
         // Versions
-        kotlinVersion = '1.1.51'
-        androidPluginVersion = '2.3.3'
 
         // Plugins
+        androidPluginVersion = '2.3.3'
+        junitPluginVersion = '1.0.0'
+        // Libs
+        kotlinVersion = '1.1.51'
+        // Test
+        androidSupportVersion = '24.0.0'
+        androidSupportTestVersion = '0.5'
+        assertJAndroidVersion = '1.2.0'
+        junitPlatformRunnerVersion = '1.0.0'
+        spekVersion = '1.1.5'
+
+        ////////////////////////////////////////////////////////////////////////////////////////////
+        // Plugins
+
         androidPlugin = "com.android.tools.build:gradle:$androidPluginVersion"
         kotlinPlugin = "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
 
+        ////////////////////////////////////////////////////////////////////////////////////////////
         // Dependencies
+
+        // Libs
         kotlinStdlib = "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
+        // Test
+        androidSupportAnnotations = "com.android.support:support-annotations:$androidSupportVersion"
+        androidSupportTestRunner = "com.android.support.test:runner:$androidSupportTestVersion"
+        andoridSupportTestRules = "com.android.support.test:rules:$androidSupportTestVersion"
+        assertJAndroid = "com.squareup.assertj:assertj-android:$assertJAndroidVersion"
+        junitPlatformRunner = "org.junit.platform:junit-platform-runner:$junitPlatformRunnerVersion"
+        spekApi = "org.jetbrains.spek:spek-api:$spekVersion"
+        spekJUnitPlatformEngine = "org.jetbrains.spek:spek-junit-platform-engine:$spekVersion"
     }
 }
 
@@ -29,5 +53,6 @@ subprojects {
     repositories {
         jcenter()
         google()
+        maven { url "http://dl.bintray.com/jetbrains/spek" }
     }
 }

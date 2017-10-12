@@ -1,4 +1,0 @@
-package navigator
-
-class OverlayTest {
-}

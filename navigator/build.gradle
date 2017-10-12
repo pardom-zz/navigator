@@ -15,8 +15,10 @@ android {
     defaultConfig {
         minSdkVersion androidMinSdkVersion
         targetSdkVersion androidTargetSdkVersion
+        testInstrumentationRunner androidTestInstrumentationRunner
     }
     sourceSets {
+        androidTest.java.srcDirs += 'src/androidTest/kotlin'
         main.java.srcDirs += 'src/main/kotlin'
         test.java.srcDirs += 'src/test/kotlin'
     }
@@ -24,4 +26,14 @@ android {
 
 dependencies {
     compile kotlinStdlib
+
+    // Test
+    androidTestCompile androidSupportAnnotations
+    androidTestCompile androidSupportTestRunner
+    androidTestCompile andoridSupportTestRules
+    androidTestCompile assertJAndroid
+
+    testCompile junitPlatformRunner
+    testCompile spekApi
+    testCompile spekJUnitPlatformEngine
 }

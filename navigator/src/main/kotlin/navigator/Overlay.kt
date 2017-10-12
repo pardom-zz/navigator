@@ -46,7 +46,7 @@ abstract class Overlay : FrameLayout {
         _entries.add(index, entry)
         val view = entry.builder(context)
         addView(view, index)
-        build()
+        updateChildren()
     }
 
     /**
@@ -66,7 +66,7 @@ abstract class Overlay : FrameLayout {
             val view = entry.builder(context)
             addView(view, index + i)
         }
-        build()
+        updateChildren()
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -76,17 +76,18 @@ abstract class Overlay : FrameLayout {
         val index = _entries.indexOf(entry)
         _entries.removeAt(index)
         removeViewAt(index)
-        build()
+        updateChildren()
     }
 
-    private fun build() {
+    private fun updateChildren() {
         var onstage = true
+        val count = _entries.size
         _entries.reversed().forEachIndexed { index, entry ->
-            if (entry.opaque) {
-                onstage = true
-            }
-            val view = getChildAt(index)
+            val view = getChildAt(count - index - 1)
             view.visibility = if (onstage) View.VISIBLE else View.GONE
+            if (entry.opaque) {
+                onstage = false
+            }
         }
     }
 
