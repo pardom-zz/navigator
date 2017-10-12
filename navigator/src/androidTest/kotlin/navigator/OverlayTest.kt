@@ -5,6 +5,7 @@ import android.support.test.InstrumentationRegistry
 import android.support.test.filters.SmallTest
 import android.support.test.runner.AndroidJUnit4
 import android.view.View
+import android.view.ViewGroup
 import android.widget.TextView
 import navigator.Overlay.Entry
 import org.assertj.core.api.Assertions.assertThat
@@ -21,6 +22,28 @@ class OverlayTest {
     @Before
     fun setUp() {
         overlay = MockOverlay(InstrumentationRegistry.getTargetContext())
+    }
+
+    @Test
+    fun testNoInitialEntries() {
+        MockOverlay(
+                InstrumentationRegistry.getTargetContext(),
+                emptyList(),
+                { view -> assertThat(view.childCount).isEqualTo(0) }
+        )
+    }
+
+    @Test
+    fun testInitialEntries() {
+        MockOverlay(
+                InstrumentationRegistry.getTargetContext(),
+                listOf(
+                        createEntry(),
+                        createEntry(),
+                        createEntry()
+                ),
+                { view -> assertThat(view.childCount).isEqualTo(3) }
+        )
     }
 
     @Test
@@ -88,10 +111,16 @@ class OverlayTest {
         assertThat(overlay.getChildAt(1).visibility).isEqualTo(View.VISIBLE)
     }
 
-    // Utils
+    private class MockOverlay(
+            context: Context,
+            override val initialEntries: Collection<Entry> = emptyList(),
+            private val finishInflateListener: (ViewGroup) -> Unit = {}) : Overlay(context) {
 
-    private class MockOverlay(context: Context) : Overlay(context) {
-        override val initialEntries = emptyList<Entry>()
+        override fun onFinishInflate() {
+            super.onFinishInflate()
+            finishInflateListener(this)
+        }
+
     }
 
     private fun createEntry(id: Int = 0, opaque: Boolean = true) = Entry(
