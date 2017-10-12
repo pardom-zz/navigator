@@ -1,0 +1,33 @@
+buildscript {
+    ext {
+        // Android
+        androidBuildToolsVersion = '26.0.0'
+        androidMinSdkVersion = 16
+        androidTargetSdkVersion = 26
+        androidCompileSdkVersion = 26
+
+        // Versions
+        kotlinVersion = '1.1.51'
+        androidPluginVersion = '2.3.3'
+
+        // Plugins
+        androidPlugin = "com.android.tools.build:gradle:$androidPluginVersion"
+        kotlinPlugin = "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
+
+        // Dependencies
+        kotlinStdlib = "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
+    }
+}
+
+subprojects {
+    buildscript {
+        repositories {
+            jcenter()
+            google()
+        }
+    }
+    repositories {
+        jcenter()
+        google()
+    }
+}
