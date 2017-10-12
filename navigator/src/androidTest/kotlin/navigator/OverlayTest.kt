@@ -125,8 +125,7 @@ class OverlayTest {
 
     private fun createEntry(id: Int = 0, opaque: Boolean = true) = Entry(
             { context -> TextView(context).apply { setId(id) } },
-            opaque,
-            true
+            opaque
     )
 
 }
