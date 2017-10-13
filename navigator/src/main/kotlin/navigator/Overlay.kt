@@ -137,7 +137,7 @@ abstract class Overlay : FrameLayout {
      *
      * @see [Overlay].
      */
-    class Entry(builder: (Context) -> View, opaque: Boolean) {
+    class Entry(builder: ViewBuilder, opaque: Boolean) {
 
         internal var _overlay: Overlay? = null
 
@@ -145,7 +145,7 @@ abstract class Overlay : FrameLayout {
          * This entry will include the widget built by this builder in the overlay at the entry's
          * position.
          */
-        val builder: (Context) -> View = builder
+        val builder: ViewBuilder = builder
 
         /**
          * Whether this entry occludes the entire overlay.
@@ -189,7 +189,7 @@ abstract class Overlay : FrameLayout {
         tailrec fun of(view: View): Overlay {
             tailrec fun of(viewParent: ViewParent?): Overlay {
                 if (viewParent is Overlay) return viewParent
-                if (viewParent == null) throw IllegalArgumentException("Overlay not an ancestor of $view.")
+                if (viewParent == null) error("Overlay not an ancestor of $view.")
                 return of(viewParent.parent)
             }
             if (view is Overlay) return view
