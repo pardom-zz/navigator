@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewParent
 import android.widget.FrameLayout
 import navigator.Overlay.Entry
+import java.util.concurrent.atomic.AtomicBoolean
 
 /**
  * A [FrameLayout] of entries that can be managed independently.
@@ -40,6 +41,7 @@ abstract class Overlay : FrameLayout {
     // Private properties
 
     private val _entries = mutableListOf<Entry>()
+    private val initialEntriesAdded = AtomicBoolean(false)
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
     // Constructors
@@ -55,9 +57,11 @@ abstract class Overlay : FrameLayout {
     ////////////////////////////////////////////////////////////////////////////////////////////////
     // Lifecycle overrides
 
-    override fun onFinishInflate() {
-        super.onFinishInflate()
-        insertAll(initialEntries)
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
+        if (initialEntriesAdded.compareAndSet(false, true)) {
+            insertAll(initialEntries)
+        }
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
