@@ -2,14 +2,18 @@ package navigator
 
 import android.content.Context
 import android.support.test.InstrumentationRegistry
+import android.support.test.annotation.UiThreadTest
 import android.support.test.filters.SmallTest
+import android.support.test.rule.ActivityTestRule
 import android.support.test.runner.AndroidJUnit4
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import navigator.Overlay.Entry
+import navigator.util.TestActivity
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 
@@ -17,42 +21,49 @@ import org.junit.runner.RunWith
 @SmallTest
 class OverlayTest {
 
+    val activityRule = ActivityTestRule(TestActivity::class.java)
+        @Rule get
+
+    private lateinit var parent: ViewGroup
     private lateinit var overlay: Overlay
 
     @Before
     fun setUp() {
+        parent = activityRule.activity.parent
         overlay = MockOverlay(InstrumentationRegistry.getTargetContext())
     }
 
     @Test
+    @UiThreadTest
     fun testNoInitialEntries() {
-        MockOverlay(
-                InstrumentationRegistry.getTargetContext(),
-                emptyList(),
-                { view -> assertThat(view.childCount).isEqualTo(0) }
-        )
+        parent.addView(overlay)
+        assertThat(overlay.childCount).isEqualTo(0)
     }
 
     @Test
+    @UiThreadTest
     fun testInitialEntries() {
-        MockOverlay(
+        overlay = MockOverlay(
                 InstrumentationRegistry.getTargetContext(),
                 listOf(
                         createEntry(),
                         createEntry(),
                         createEntry()
-                ),
-                { view -> assertThat(view.childCount).isEqualTo(3) }
+                )
         )
+        parent.addView(overlay)
+        assertThat(overlay.childCount).isEqualTo(3)
     }
 
     @Test
+    @UiThreadTest
     fun testInsertAddsView() {
         overlay.insert(createEntry())
         assertThat(overlay.childCount).isEqualTo(1)
     }
 
     @Test
+    @UiThreadTest
     fun testInsertAddsViewAbove() {
         val entry1 = createEntry(1)
         val entry2 = createEntry(2)
@@ -66,6 +77,7 @@ class OverlayTest {
     }
 
     @Test
+    @UiThreadTest
     fun testInsertAllAddsViews() {
         overlay.insert(createEntry())
         overlay.insert(createEntry())
@@ -73,6 +85,7 @@ class OverlayTest {
     }
 
     @Test
+    @UiThreadTest
     fun testInsertAllAddsViewsAbove() {
         val entry1 = createEntry(1)
         val entry2 = createEntry(2)
@@ -88,6 +101,7 @@ class OverlayTest {
     }
 
     @Test
+    @UiThreadTest
     fun testRemoveRemovesView() {
         val entry = createEntry()
         overlay.insert(entry)
@@ -96,6 +110,7 @@ class OverlayTest {
     }
 
     @Test
+    @UiThreadTest
     fun testOpaqueView() {
         overlay.insert(createEntry())
         overlay.insert(createEntry())
@@ -104,6 +119,7 @@ class OverlayTest {
     }
 
     @Test
+    @UiThreadTest
     fun testNonOpaqueView() {
         overlay.insert(createEntry())
         overlay.insert(createEntry(opaque = false))
@@ -113,15 +129,8 @@ class OverlayTest {
 
     private class MockOverlay(
             context: Context,
-            override val initialEntries: Collection<Entry> = emptyList(),
-            private val finishInflateListener: (ViewGroup) -> Unit = {}) : Overlay(context) {
-
-        override fun onFinishInflate() {
-            super.onFinishInflate()
-            finishInflateListener(this)
-        }
-
-    }
+            override val initialEntries: Collection<Entry> = emptyList()
+    ) : Overlay(context)
 
     private fun createEntry(id: Int = 0, opaque: Boolean = true) = Entry(
             { context -> TextView(context).apply { setId(id) } },
