@@ -191,6 +191,12 @@ class NavigatorTest {
 
     @Test
     @UiThreadTest
+    fun testPopUntil() {
+        TODO()
+    }
+
+    @Test
+    @UiThreadTest
     fun testCanPopEmpty() {
         expectedException.expect(IllegalArgumentException::class.java)
         navigator.canPop()

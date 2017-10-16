@@ -7,4 +7,4 @@ typealias ViewBuilder = (Context) -> View
 
 typealias RouteFactory = (Route.Settings) -> Route<*>?
 
-typealias RoutePredicate = (Route<*>) -> Boolean
+typealias RoutePredicate = (Route<*>?) -> Boolean
