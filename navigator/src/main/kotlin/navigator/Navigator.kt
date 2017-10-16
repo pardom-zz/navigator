@@ -238,19 +238,48 @@ abstract class Navigator : Overlay {
         TODO()
     }
 
+    /**
+     * Immediately remove `route` and [Route.dispose] it.
+     *
+     * The route's animation does not run and the future returned from pushing the route will not
+     * complete. Ongoing input gestures are cancelled. If the [Navigator] has any
+     * [Navigator.observers], they will be notified with [NavigatorObserver.didRemove].
+     *
+     * This method is used to dismiss dropdown menus that are up when the screen's orientation
+     * changes.
+     */
     fun removeRoute(route: Route<*>) {
+        require(route.navigator == this)
+        val index = history.indexOf(route)
+        require(index != -1)
+        val previousRoute = history.getOrNull(index - 1)
+        val nextRoute = history.getOrNull(index + 1)
+        history.removeAt(index)
+        previousRoute?.didChangeNext(nextRoute)
+        nextRoute?.didChangePrevious(previousRoute)
+        observers.forEach { observer ->
+            observer.didRemove(route, previousRoute)
+        }
+        route.dispose()
     }
 
     fun finalizeRoute(route: Route<*>) {
-
+        poppedRoutes.remove(route)
+        route.dispose()
     }
 
     fun popUntil(predicate: RoutePredicate) {
 
     }
 
+    /**
+     * Whether this navigator can be popped.
+     *
+     * The only route that cannot be popped off the navigator is the initial route.
+     */
     fun canPop(): Boolean {
-        TODO()
+        require(history.isNotEmpty())
+        return history.size > 1 || history[0].willHandlePopInternally
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////

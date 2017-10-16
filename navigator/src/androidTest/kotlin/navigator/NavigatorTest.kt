@@ -37,9 +37,15 @@ class NavigatorTest {
     @Test
     @UiThreadTest
     fun testPush() {
-        val routesSize = navigator.routes.size
-        navigator.push(MockRoute())
-        assertThat(navigator.routes.size).isEqualTo(routesSize + 1)
+        val routeA = MockRoute()
+        val routeB = MockRoute()
+        val routeC = MockRoute()
+        navigator.push(routeA)
+        navigator.push(routeB)
+        navigator.push(routeC)
+        assertThat(navigator.routes).containsExactlyElementsOf(listOf(
+                routeA, routeB, routeC
+        ))
     }
 
     @Test
@@ -166,6 +172,45 @@ class NavigatorTest {
         assertThat(navigator.routes).containsExactlyElementsOf(listOf(
                 routeA, routeD, routeC
         ))
+    }
+
+    @Test
+    @UiThreadTest
+    fun testRemoveRoute() {
+        val routeA = MockRoute()
+        val routeB = MockRoute()
+        val routeC = MockRoute()
+        navigator.push(routeA)
+        navigator.push(routeB)
+        navigator.push(routeC)
+        navigator.removeRoute(routeB)
+        assertThat(navigator.routes).containsExactlyElementsOf(listOf(
+                routeA, routeC
+        ))
+    }
+
+    @Test
+    @UiThreadTest
+    fun testCanPopEmpty() {
+        expectedException.expect(IllegalArgumentException::class.java)
+        navigator.canPop()
+    }
+
+    @Test
+    @UiThreadTest
+    fun testCanPopSingle() {
+        navigator.push(MockRoute())
+        val canPop = navigator.canPop()
+        assertThat(canPop).isFalse()
+    }
+
+    @Test
+    @UiThreadTest
+    fun testCanPopTrue() {
+        navigator.push(MockRoute())
+        navigator.push(MockRoute())
+        val canPop = navigator.canPop()
+        assertThat(canPop).isTrue()
     }
 
 }
