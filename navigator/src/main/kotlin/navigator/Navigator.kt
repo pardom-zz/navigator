@@ -106,7 +106,7 @@ abstract class Navigator : Overlay {
      * route is popped off the navigator.
      */
     fun push(route: Route<*>): Deferred<*> {
-        assert(route.navigator == null);
+        require(route.navigator == null);
         val oldRoute = if (history.isNotEmpty()) history.last() else null
         route.navigator = this
         route.install(currentOverlayEntry)
@@ -151,12 +151,12 @@ abstract class Navigator : Overlay {
      */
     fun replace(oldRoute: Route<*>, newRoute: Route<*>) {
         if (oldRoute == newRoute) return
-        assert(oldRoute.navigator == this)
-        assert(newRoute.navigator == null)
-        assert(oldRoute.overlayEntries.isNotEmpty())
-        assert(newRoute.overlayEntries.isEmpty())
+        require(oldRoute.navigator == this)
+        require(newRoute.navigator == null)
+        require(oldRoute.overlayEntries.isNotEmpty())
+        require(newRoute.overlayEntries.isEmpty())
         val index = history.indexOf(oldRoute)
-        assert(index >= 0)
+        require(index >= 0)
         newRoute.navigator = this
         newRoute.install(oldRoute.overlayEntries.lastOrNull())
         history[index] = newRoute
@@ -176,13 +176,13 @@ abstract class Navigator : Overlay {
 
     fun pushReplacement(newRoute: Route<*>, result: Any? = null): Deferred<*> {
         val oldRoute = history.last()
-        assert(oldRoute.navigator == this)
-        assert(oldRoute.overlayEntries.isNotEmpty())
-        assert(newRoute.navigator == null)
-        assert(newRoute.overlayEntries.isEmpty())
+        require(oldRoute.navigator == this)
+        require(oldRoute.overlayEntries.isNotEmpty())
+        require(newRoute.navigator == null)
+        require(newRoute.overlayEntries.isEmpty())
         val index = history.size - 1
-        assert(index >= 0)
-        assert(history.indexOf(oldRoute) == index)
+        require(index >= 0)
+        require(history.indexOf(oldRoute) == index)
         newRoute.navigator = this
         newRoute.install(currentOverlayEntry)
         history[index] = newRoute
@@ -204,8 +204,18 @@ abstract class Navigator : Overlay {
         return pushReplacement(routeNamed(name), result)
     }
 
+    /**
+     * Replaces a route that is not currently visible with a new route.
+     *
+     * The route to be removed is the one below the given `anchorRoute`. That route must not be the
+     * first route in the history.
+     *
+     * In every other way, this acts the same as [replace].
+     */
     fun replaceRouteBelow(anchorRoute: Route<*>, newRoute: Route<*>) {
-
+        require(anchorRoute.navigator == this)
+        require(history.indexOf(anchorRoute) > 0)
+        replace(history[history.indexOf(anchorRoute) - 1], newRoute)
     }
 
     fun removeRouteBelow(anchorRoute: Route<*>) {

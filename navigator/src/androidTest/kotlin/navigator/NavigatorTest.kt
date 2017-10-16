@@ -13,6 +13,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import org.junit.rules.ExpectedException
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
@@ -21,6 +22,8 @@ class NavigatorTest {
 
     @get:Rule
     val activityRule = ActivityTestRule(TestActivity::class.java)
+    @get:Rule
+    val expectedException = ExpectedException.none()
 
     private lateinit var parent: ViewGroup
     private lateinit var navigator: MockNavigator
@@ -117,6 +120,52 @@ class NavigatorTest {
         navigator.push(routeA)
         val result = navigator.pushReplacement(routeB, "result")
         assertThat(result.getCompleted()).isEqualTo("result")
+    }
+
+    @Test
+    @UiThreadTest
+    fun testReplaceRouteBelowFirst() {
+        val routeA = MockRoute()
+        val routeB = MockRoute()
+        val routeC = MockRoute()
+        val routeD = MockRoute()
+        navigator.push(routeA)
+        navigator.push(routeB)
+        navigator.push(routeC)
+        expectedException.expect(IllegalArgumentException::class.java)
+        navigator.replaceRouteBelow(routeA, routeD)
+    }
+
+    @Test
+    @UiThreadTest
+    fun testReplaceRouteBelowMiddle() {
+        val routeA = MockRoute()
+        val routeB = MockRoute()
+        val routeC = MockRoute()
+        val routeD = MockRoute()
+        navigator.push(routeA)
+        navigator.push(routeB)
+        navigator.push(routeC)
+        navigator.replaceRouteBelow(routeB, routeD)
+        assertThat(navigator.routes).containsExactlyElementsOf(listOf(
+                routeD, routeB, routeC
+        ))
+    }
+
+    @Test
+    @UiThreadTest
+    fun testReplaceRouteBelowLast() {
+        val routeA = MockRoute()
+        val routeB = MockRoute()
+        val routeC = MockRoute()
+        val routeD = MockRoute()
+        navigator.push(routeA)
+        navigator.push(routeB)
+        navigator.push(routeC)
+        navigator.replaceRouteBelow(routeC, routeD)
+        assertThat(navigator.routes).containsExactlyElementsOf(listOf(
+                routeA, routeD, routeC
+        ))
     }
 
 }
