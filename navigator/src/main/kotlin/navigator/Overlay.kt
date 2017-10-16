@@ -41,7 +41,7 @@ abstract class Overlay : FrameLayout {
     // Private properties
 
     private val _entries = mutableListOf<Entry>()
-    private val initialEntriesAdded = AtomicBoolean(false)
+    private val initialized = AtomicBoolean(false)
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
     // Constructors
@@ -59,7 +59,7 @@ abstract class Overlay : FrameLayout {
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
-        if (initialEntriesAdded.compareAndSet(false, true)) {
+        if (initialized.compareAndSet(false, true)) {
             insertAll(initialEntries)
         }
     }

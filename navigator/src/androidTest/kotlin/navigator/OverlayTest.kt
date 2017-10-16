@@ -21,8 +21,8 @@ import org.junit.runner.RunWith
 @SmallTest
 class OverlayTest {
 
+    @get:Rule
     val activityRule = ActivityTestRule(TestActivity::class.java)
-        @Rule get
 
     private lateinit var parent: ViewGroup
     private lateinit var overlay: Overlay

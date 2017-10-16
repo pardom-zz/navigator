@@ -14,6 +14,7 @@ buildscript {
         junitPluginVersion = '1.0.0'
         // Libs
         kotlinVersion = '1.1.51'
+        kotlinCoroutinesVersion = '0.19.1'
         // Test
         androidSupportVersion = '24.0.0'
         androidSupportTestVersion = '0.5'
@@ -31,6 +32,7 @@ buildscript {
         // Dependencies
 
         // Libs
+        kotlinCoroutines= "org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinCoroutinesVersion"
         kotlinStdlib = "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
         // Test
         androidSupportAnnotations = "com.android.support:support-annotations:$androidSupportVersion"
