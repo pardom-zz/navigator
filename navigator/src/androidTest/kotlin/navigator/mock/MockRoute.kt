@@ -6,12 +6,13 @@ import navigator.Navigator
 import navigator.Overlay
 import navigator.Route
 
-class MockRoute : Route<String> {
+class MockRoute(
+        override var navigator: Navigator? = null,
+        override val overlayEntries: MutableList<Overlay.Entry> = mutableListOf(),
+        override val popped: CompletableDeferred<String?> = CompletableDeferred(),
+        override val currentResult: String? = null,
+        override val willHandlePopInternally: Boolean = false) : Route<String> {
 
-    override var navigator: Navigator? = null
-    override val overlayEntries: MutableList<Overlay.Entry> = mutableListOf()
-    override val popped: CompletableDeferred<String?> = CompletableDeferred()
-    override val currentResult: String? = null
 
     override fun install(insertionPoint: Overlay.Entry?) {
     }

@@ -206,7 +206,15 @@ class NavigatorTest {
 
     @Test
     @UiThreadTest
-    fun testCanPopTrue() {
+    fun testCanPopSingleWillHandlePopInternally() {
+        navigator.push(MockRoute(willHandlePopInternally = true))
+        val canPop = navigator.canPop()
+        assertThat(canPop).isTrue()
+    }
+
+    @Test
+    @UiThreadTest
+    fun testCanPopMultiple() {
         navigator.push(MockRoute())
         navigator.push(MockRoute())
         val canPop = navigator.canPop()
