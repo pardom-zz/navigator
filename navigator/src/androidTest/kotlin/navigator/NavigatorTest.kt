@@ -176,6 +176,49 @@ class NavigatorTest {
 
     @Test
     @UiThreadTest
+    fun testRemoveRouteBelow() {
+        TODO()
+    }
+
+    @Test
+    @UiThreadTest
+    fun testPushAndRemoveUntil() {
+        TODO()
+    }
+
+    @Test
+    @UiThreadTest
+    fun testMaybePop() {
+        TODO()
+    }
+
+    @Test
+    @UiThreadTest
+    fun testPop() {
+        val routeA = MockRoute()
+        val routeB = MockRoute()
+        val routeC = MockRoute()
+        navigator.push(routeA)
+        navigator.push(routeB)
+        navigator.push(routeC)
+        navigator.pop()
+        assertThat(navigator.routes).containsExactlyElementsOf(listOf(
+                routeA, routeB
+        ))
+    }
+
+    @Test
+    @UiThreadTest
+    fun testPopResult() {
+        navigator.pushNamed("A")
+        navigator.pushNamed("B")
+        navigator.pushNamed("C")
+        val result = navigator.pop("pop")
+        assertThat(result).isEqualTo(true)
+    }
+
+    @Test
+    @UiThreadTest
     fun testRemoveRoute() {
         val routeA = MockRoute()
         val routeB = MockRoute()
@@ -187,6 +230,12 @@ class NavigatorTest {
         assertThat(navigator.routes).containsExactlyElementsOf(listOf(
                 routeA, routeC
         ))
+    }
+
+    @Test
+    @UiThreadTest
+    fun testFinalizeRoute() {
+        TODO()
     }
 
     @Test
