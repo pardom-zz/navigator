@@ -138,7 +138,7 @@ class NavigatorTest {
         navigator.push(routeA)
         navigator.push(routeB)
         navigator.push(routeC)
-        expectedException.expect(IllegalArgumentException::class.java)
+        expectedException.expect(IndexOutOfBoundsException::class.java)
         navigator.replaceRouteBelow(routeA, routeD)
     }
 
@@ -198,8 +198,8 @@ class NavigatorTest {
     @Test
     @UiThreadTest
     fun testCanPopEmpty() {
-        expectedException.expect(IllegalArgumentException::class.java)
-        navigator.canPop()
+        val canPop = navigator.canPop()
+        assertThat(canPop).isFalse()
     }
 
     @Test

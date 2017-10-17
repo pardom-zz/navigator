@@ -74,8 +74,8 @@ abstract class Overlay : FrameLayout {
      * inserted on top.
      */
     fun insert(entry: Entry, above: Entry? = null) {
-        require(entry._overlay == null)
-        require(above == null || (above._overlay == this && _entries.contains(above)))
+        assert(entry._overlay == null)
+        assert(above == null || (above._overlay == this && _entries.contains(above)))
         entry._overlay = this
         val index = if (above == null) _entries.size else _entries.indexOf(above) + 1
         _entries.add(index, entry)
@@ -91,12 +91,12 @@ abstract class Overlay : FrameLayout {
      * are inserted on top.
      */
     fun insertAll(entries: Collection<Entry>, above: Entry? = null) {
-        require(above == null || (above._overlay == this && _entries.contains(above)))
+        assert(above == null || (above._overlay == this && _entries.contains(above)))
         if (entries.isEmpty()) return
         val index = if (above == null) _entries.size else _entries.indexOf(above) + 1
         _entries.addAll(index, entries)
         entries.forEachIndexed { i, entry ->
-            require(entry._overlay == null)
+            assert(entry._overlay == null)
             entry._overlay = this
             val view = entry.builder(context)
             addView(view, index + i)
@@ -158,7 +158,7 @@ abstract class Overlay : FrameLayout {
             set(value) {
                 if (field == value) return
                 field = value
-                require(_overlay != null)
+                assert(_overlay != null)
                 _overlay!!.updateChildren()
             }
 
@@ -168,7 +168,7 @@ abstract class Overlay : FrameLayout {
          * This should only be called once.
          */
         fun remove() {
-            require(_overlay != null)
+            assert(_overlay != null)
             val overlay = _overlay
             _overlay = null
             overlay!!.remove(this)

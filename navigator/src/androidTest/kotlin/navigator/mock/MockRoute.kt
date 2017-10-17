@@ -9,7 +9,7 @@ import navigator.Route
 class MockRoute(
         override var navigator: Navigator? = null,
         override val overlayEntries: MutableList<Overlay.Entry> = mutableListOf(),
-        override val popped: CompletableDeferred<String?> = CompletableDeferred(),
+        override val popped: CompletableDeferred<Any?> = CompletableDeferred(),
         override val currentResult: String? = null,
         override val willHandlePopInternally: Boolean = false) : Route<String> {
 
@@ -33,7 +33,7 @@ class MockRoute(
     override fun didChangePrevious(previousRoute: Route<*>?) {
     }
 
-    override fun didComplete(result: String?) {
+    override fun didComplete(result: Any?) {
     }
 
 }

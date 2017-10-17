@@ -4,6 +4,16 @@ import kotlinx.coroutines.experimental.CompletableDeferred
 import kotlinx.coroutines.experimental.Deferred
 import kotlinx.coroutines.experimental.async
 
+/**
+ * An abstraction for an entry managed by a [Navigator].
+ *
+ * This class defines an abstract interface between the navigator and the "routes" that are pushed
+ * on and popped off the navigator. Most routes have visual affordances, which they place in the
+ * navigators [Overlay] using one or more [Overlay.Entry] objects.
+ *
+ * See [Navigator] for more explanation of how to use a Route with navigation, including code
+ * examples.
+ */
 interface Route<T> {
 
     /**
@@ -21,7 +31,7 @@ interface Route<T> {
      *
      * The future completes with the value given to [Navigator.pop], if any.
      */
-    val popped: CompletableDeferred<T?>
+    val popped: CompletableDeferred<Any?>
 
     /**
      * When this route is popped (see [Navigator.pop]) if the result isn't specified or if it's
@@ -124,7 +134,7 @@ interface Route<T> {
      * lets the route perform an exit animation (or some other visual effect) after being popped but
      * prior to being disposed.
      */
-    fun didPop(result: T): Boolean {
+    fun didPop(result: Any?): Boolean {
         didComplete(result)
         return true
     }
@@ -154,7 +164,7 @@ interface Route<T> {
      *
      * This is called by [didPop] and in response to [Navigator.pushReplacement].
      */
-    fun didComplete(result: T?) {
+    fun didComplete(result: Any?) {
         popped.complete(result)
     }
 
@@ -207,7 +217,7 @@ interface Route<T> {
         /**
          * Delegate this to the next level of navigation.
          *
-         * If [Route.willPop] return [BUBBLE] then the back button will be handled by the
+         * If [Route.willPop] return [] then the back button will be handled by the
          * [SystemNavigator], which will usually close the application.
          */
         BUBBLE

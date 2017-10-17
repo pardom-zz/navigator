@@ -3,29 +3,21 @@ package navigator.mock
 import android.content.Context
 import navigator.Navigator
 import navigator.Route
-import navigator.RouteFactory
 
 class MockNavigator(
         context: Context,
-        override val initialRoute: String = DEFAULT_ROUTE_NAME,
-        override val onGenerateRoute: RouteFactory = MockNavigator.onGenerateRoute,
-        override val onUnknownRoute: RouteFactory = MockNavigator.onUnknownRoute,
-        override val observers: List<Observer> = emptyList()
+        override val initialRoute: String = DEFAULT_ROUTE_NAME
 ) : Navigator(context) {
 
     val routes
         get() = getHistory()
 
-    companion object {
+    override fun onGenerateRoute(settings: Route.Settings): Route<*>? {
+        return null
+    }
 
-        private val onGenerateRoute = { settings: Route.Settings ->
-            null
-        }
-
-        private val onUnknownRoute = { settings: Route.Settings ->
-            MockRoute()
-        }
-
+    override fun onUnknownRoute(settings: Route.Settings): Route<*> {
+        return MockRoute()
     }
 
 }
