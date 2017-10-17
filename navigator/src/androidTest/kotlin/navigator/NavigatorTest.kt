@@ -6,6 +6,7 @@ import android.support.test.filters.SmallTest
 import android.support.test.rule.ActivityTestRule
 import android.support.test.runner.AndroidJUnit4
 import android.view.ViewGroup
+import kotlinx.coroutines.experimental.runBlocking
 import navigator.mock.MockNavigator
 import navigator.mock.MockRoute
 import navigator.util.TestActivity
@@ -189,7 +190,33 @@ class NavigatorTest {
     @Test
     @UiThreadTest
     fun testMaybePop() {
-        TODO()
+        val routeA = MockRoute()
+        val routeB = MockRoute()
+        val routeC = MockRoute()
+        navigator.push(routeA)
+        navigator.push(routeB)
+        navigator.push(routeC)
+        runBlocking {
+            navigator.maybePop().await()
+            assertThat(navigator.routes).containsExactlyElementsOf(listOf(
+                    routeA, routeB
+            ))
+        }
+    }
+
+    @Test
+    @UiThreadTest
+    fun testMaybePopResult() {
+        val routeA = MockRoute()
+        val routeB = MockRoute()
+        val routeC = MockRoute()
+        navigator.push(routeA)
+        navigator.push(routeB)
+        navigator.push(routeC)
+        runBlocking {
+            val result = navigator.maybePop("maybePop").await()
+            assertThat(result).isEqualTo(true)
+        }
     }
 
     @Test
