@@ -178,7 +178,16 @@ class NavigatorTest {
     @Test
     @UiThreadTest
     fun testRemoveRouteBelow() {
-        TODO()
+        val routeA = MockRoute()
+        val routeB = MockRoute()
+        val routeC = MockRoute()
+        navigator.push(routeA)
+        navigator.push(routeB)
+        navigator.push(routeC)
+        navigator.removeRouteBelow(routeB)
+        assertThat(navigator.routes).containsExactlyElementsOf(listOf(
+                routeB, routeC
+        ))
     }
 
     @Test
