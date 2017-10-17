@@ -193,7 +193,19 @@ class NavigatorTest {
     @Test
     @UiThreadTest
     fun testPushAndRemoveUntil() {
-        TODO()
+        val routeA = MockRoute()
+        val routeB = MockRoute()
+        val routeC = MockRoute()
+        val routeD = MockRoute()
+        navigator.push(routeA)
+        navigator.push(routeB)
+        navigator.push(routeC)
+        navigator.pushAndRemoveUntil(routeD) { route ->
+            route?.isFirst ?: false
+        }
+        assertThat(navigator.routes).containsExactlyElementsOf(listOf(
+                routeA, routeD
+        ))
     }
 
     @Test
