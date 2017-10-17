@@ -192,7 +192,18 @@ class NavigatorTest {
     @Test
     @UiThreadTest
     fun testPopUntil() {
-        TODO()
+        val routeA = MockRoute()
+        val routeB = MockRoute()
+        val routeC = MockRoute()
+        navigator.push(routeA)
+        navigator.push(routeB)
+        navigator.push(routeC)
+        navigator.popUntil { route ->
+            route?.isFirst ?: false
+        }
+        assertThat(navigator.routes).containsExactlyElementsOf(listOf(
+                routeA
+        ))
     }
 
     @Test
