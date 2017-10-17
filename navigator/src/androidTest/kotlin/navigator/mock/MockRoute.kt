@@ -18,7 +18,7 @@ class MockRoute(
     }
 
     override fun didPush(): Deferred<Unit> {
-        return CompletableDeferred()
+        return CompletableDeferred(Unit)
     }
 
     override fun didReplace(oldRoute: Route<*>?) {
@@ -31,9 +31,6 @@ class MockRoute(
     }
 
     override fun didChangePrevious(previousRoute: Route<*>?) {
-    }
-
-    override fun didComplete(result: Any?) {
     }
 
 }

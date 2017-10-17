@@ -125,8 +125,11 @@ class NavigatorTest {
         val routeA = MockRoute()
         val routeB = MockRoute()
         navigator.push(routeA)
-        val result = navigator.pushReplacement(routeB, "result")
-        assertThat(result.getCompleted()).isEqualTo("result")
+//        runBlocking {
+//            val result = navigator.pushReplacement(routeB, "result").await()
+//            assertThat(result).isEqualTo("result")
+//        }
+        TODO()
     }
 
     @Test
@@ -283,7 +286,12 @@ class NavigatorTest {
     @Test
     @UiThreadTest
     fun testFinalizeRoute() {
-        TODO()
+        val routeA = MockRoute()
+        navigator.push(routeA)
+        navigator.pop(routeA)
+        assertThat(routeA.navigator).isNotNull()
+        navigator.finalizeRoute(routeA)
+        assertThat(routeA.navigator).isNull()
     }
 
     @Test
