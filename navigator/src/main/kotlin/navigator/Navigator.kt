@@ -408,7 +408,7 @@ abstract class Navigator : Overlay {
      */
     fun removeRouteBelow(anchorRoute: Route<*>) {
         assert(anchorRoute.navigator == this)
-        val index = history.indexOf(anchorRoute) + 1
+        val index = history.indexOf(anchorRoute) - 1
         assert(index >= 0)
         val targetRoute = history[index]
         assert(targetRoute.navigator == this)
