@@ -14,38 +14,35 @@ import kotlinx.coroutines.experimental.async
  * See [Navigator] for more explanation of how to use a Route with navigation, including code
  * examples.
  */
-interface Route<T> {
+abstract class Route<T> {
 
     /**
      * The navigator that the route is in, if any.
      */
-    var navigator: Navigator?
+    var navigator: Navigator? = null
 
     /**
      * The overlay entries for this route.
      */
-    val overlayEntries: MutableList<Overlay.Entry>
+    val overlayEntries: MutableList<Overlay.Entry> = mutableListOf()
 
     /**
      * A future that completes when this route is popped off the navigator.
      *
      * The future completes with the value given to [Navigator.pop], if any.
      */
-    val popped: CompletableDeferred<Any?>
+    val popped: CompletableDeferred<Any?> = CompletableDeferred()
 
     /**
      * When this route is popped (see [Navigator.pop]) if the result isn't specified or if it's
      * null, this value will be used instead.
      */
-    val currentResult: T?
+    open val currentResult: T? = null
 
     /**
      * Whether calling [didPop] would return false.
      */
-    val willHandlePopInternally: Boolean
-        get() {
-            return false
-        }
+    open val willHandlePopInternally: Boolean = false
 
     /**
      * Whether this route is the top-most route on the navigator.
@@ -97,19 +94,21 @@ interface Route<T> {
      *
      * The overlay argument will be null if this is the first route inserted.
      */
-    fun install(insertionPoint: Overlay.Entry?)
+    open fun install(insertionPoint: Overlay.Entry?) {}
 
     /**
      * Called after [install] when the route is pushed onto the navigator.
      *
      * The returned value resolves when the push transition is complete.
      */
-    fun didPush(): Deferred<Unit>
+    open fun didPush(): Deferred<Unit> {
+        return CompletableDeferred(Unit)
+    }
 
     /**
      * Called after [install] when the route replaced another in the navigator.
      */
-    fun didReplace(oldRoute: Route<*>?)
+    open fun didReplace(oldRoute: Route<*>?) {}
 
     /**
      * Returns false if this route wants to veto a [Navigator.pop]. This method is called by
@@ -119,7 +118,7 @@ interface Route<T> {
      * This behavior prevents the user from popping the first route off the history and being
      * stranded at a blank screen.
      */
-    fun willPop(): Deferred<PopDisposition> = async {
+    open fun willPop(): Deferred<PopDisposition> = async {
         if (isFirst) PopDisposition.BUBBLE else PopDisposition.POP
     }
 
@@ -134,7 +133,7 @@ interface Route<T> {
      * lets the route perform an exit animation (or some other visual effect) after being popped but
      * prior to being disposed.
      */
-    fun didPop(result: Any?): Boolean {
+    open fun didPop(result: Any?): Boolean {
         didComplete(result)
         return true
     }
@@ -142,14 +141,14 @@ interface Route<T> {
     /**
      * The given route, which came after this one, has been popped off the navigator.
      */
-    fun didPopNext(nextRoute: Route<*>?)
+    open fun didPopNext(nextRoute: Route<*>?) {}
 
     /**
      * This route's next route has changed to the given new route. This is called on a route
      * whenever the next route changes for any reason, except for cases when [didPopNext] would be
      * called, so long as it is in the history. `nextRoute` will be null if there's no next route.
      */
-    fun didChangeNext(nextRoute: Route<*>?)
+    open fun didChangeNext(nextRoute: Route<*>?) {}
 
     /**
      * This route's previous route has changed to the given new route. This is called on a route
@@ -157,14 +156,14 @@ interface Route<T> {
      * for immediately after the route has been pushed (in which case [didPush] or [didReplace] will
      * be called instead). `previousRoute` will be null if there's no previous route.
      */
-    fun didChangePrevious(previousRoute: Route<*>?)
+    open fun didChangePrevious(previousRoute: Route<*>?) {}
 
     /**
      * The route was popped or is otherwise being removed somewhat gracefully.
      *
      * This is called by [didPop] and in response to [Navigator.pushReplacement].
      */
-    fun didComplete(result: Any?) {
+    open fun didComplete(result: Any?) {
         popped.complete(result)
     }
 
@@ -173,7 +172,7 @@ interface Route<T> {
      *
      * This route is no longer referenced by the navigator.
      */
-    fun dispose() {
+    open fun dispose() {
         navigator = null
     }
 
