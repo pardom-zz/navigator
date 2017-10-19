@@ -252,7 +252,26 @@ abstract class Navigator : Overlay {
             }
             val initialRouteName = initialRoute ?: DEFAULT_ROUTE_NAME
             if (initialRouteName.startsWith("/") && initialRouteName.length > 1) {
-
+                val initialRouteName = initialRouteName.drop(1)
+                val plannedInitialRouteNames = mutableListOf(DEFAULT_ROUTE_NAME)
+                val plannedInitialRoutes = mutableListOf(nullableRouteNamed(DEFAULT_ROUTE_NAME))
+                if (initialRouteName.isNotBlank()) {
+                    val routeName = StringBuilder()
+                    val routeParts = initialRouteName.split("/")
+                    routeParts.forEach { routePart ->
+                        routeName.append("/$routePart")
+                        plannedInitialRouteNames.add(routeName.toString())
+                        plannedInitialRoutes.add(nullableRouteNamed(routeName.toString()))
+                    }
+                }
+                if (plannedInitialRoutes.contains(null)) {
+                    push(routeNamed(DEFAULT_ROUTE_NAME))
+                }
+                else {
+                    plannedInitialRoutes.forEach { route ->
+                        push(route!!)
+                    }
+                }
             }
             else {
                 var route: Route<*>? = null
