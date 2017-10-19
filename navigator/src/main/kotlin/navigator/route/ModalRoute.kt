@@ -55,4 +55,14 @@ interface ModalRoute<T> : TransitionRoute<T>, LocalHistoryRoute<T> {
         return super<TransitionRoute>.didPop(result)
     }
 
+    override fun didChangePrevious(previousRoute: Route<*>?) {
+        super<TransitionRoute>.didChangePrevious(previousRoute)
+        navigator?.invalidate()
+    }
+
+    override fun changedInternalState() {
+        super.changedInternalState()
+        navigator?.invalidate()
+    }
+
 }

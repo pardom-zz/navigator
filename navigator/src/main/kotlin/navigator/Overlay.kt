@@ -64,6 +64,11 @@ abstract class Overlay : FrameLayout {
         }
     }
 
+    override fun invalidate() {
+        super.invalidate()
+        updateChildren()
+    }
+
     ////////////////////////////////////////////////////////////////////////////////////////////////
     // Public API
 

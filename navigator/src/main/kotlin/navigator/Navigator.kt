@@ -187,7 +187,7 @@ abstract class Navigator : Overlay {
      * [Navigator] would push the following routes on startup: `/`, `/stocks`, `/stocks/HOOLI`. This
      * enables deep linking while allowing the application to maintain a predictable route history.
      */
-    abstract val initialRoute: String
+    open val initialRoute: String? = null
 
     /**
      * Called to generate a route for a given [Route.Settings]
@@ -246,7 +246,27 @@ abstract class Navigator : Overlay {
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
         if (initialized.compareAndSet(false, true)) {
+            observers.forEach { observer ->
+                assert(observer.navigator == null)
+                observer.navigator = this
+            }
+            val initialRouteName = initialRoute ?: DEFAULT_ROUTE_NAME
+            if (initialRouteName.startsWith("/") && initialRouteName.length > 1) {
 
+            }
+            else {
+                var route: Route<*>? = null
+                if (initialRouteName != DEFAULT_ROUTE_NAME) {
+                    route = nullableRouteNamed(initialRouteName)
+                }
+                if (route == null) {
+                    route = routeNamed(DEFAULT_ROUTE_NAME)
+                }
+                push(route)
+            }
+            history.forEach { route ->
+                initialEntries.addAll(route.overlayEntries)
+            }
         }
     }
 

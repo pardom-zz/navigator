@@ -185,13 +185,13 @@ interface Route<T> {
              *
              * If null, the route is anonymous.
              */
-            val name: String?,
+            val name: String? = null,
             /**
              * Whether this route is the very first route being pushed onto this [Navigator].
              *
              * The initial route typically skips any entrance transition to speed startup.
              */
-            val isInitialRoute: Boolean
+            val isInitialRoute: Boolean = false
     )
 
     /**
