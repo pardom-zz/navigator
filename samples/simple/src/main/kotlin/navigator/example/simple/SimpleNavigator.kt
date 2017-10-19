@@ -26,14 +26,19 @@ class SimpleNavigator : Navigator {
     ////////////////////////////////////////////////////////////////////////////////////////////////
     // Navigator implementation
 
+    override val initialRoute = "/b/c"
+
     override fun onGenerateRoute(settings: Route.Settings): Route<*>? {
         return when (settings.name) {
+            "/" -> PageRoute<Unit>(resourceViewBuilder(R.layout.page_a))
+            "/b" -> PageRoute<Unit>(resourceViewBuilder(R.layout.page_b))
+            "/b/c" -> PageRoute<Unit>(resourceViewBuilder(R.layout.page_c))
             else -> null
         }
     }
 
     override fun onUnknownRoute(settings: Route.Settings): Route<*> {
-        return PageRoute<Unit>(resourceViewBuilder(R.layout.unknown_route))
+        return PageRoute<Unit>(resourceViewBuilder(R.layout.page_unknown))
     }
 
 }
