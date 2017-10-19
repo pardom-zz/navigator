@@ -3,6 +3,7 @@ package navigator.route
 import kotlinx.coroutines.experimental.Deferred
 import kotlinx.coroutines.experimental.async
 import navigator.Route
+import navigator.Route.PopDisposition
 import navigator.route.LocalHistoryRoute.Entry
 
 /**
@@ -13,9 +14,9 @@ import navigator.route.LocalHistoryRoute.Entry
  * history entries is non-empty. Rather than being removed as the current route, the most recent
  * [Entry] is removed from the list and its [Entry.onRemove] is called.
  */
-abstract class LocalHistoryRoute<T> : Route<T>() {
+interface LocalHistoryRoute<T> : Route<T> {
 
-    private val localHistory by lazy { mutableListOf<Entry>() }
+    val localHistory: MutableList<Entry>
 
     override val willHandlePopInternally: Boolean
         get() {
@@ -81,7 +82,7 @@ abstract class LocalHistoryRoute<T> : Route<T>() {
      * they return. It is used by [ModalRoute], for example, to report the new information via its
      * inherited widget to any children of the route.
      */
-    open fun changedInternalState() {}
+    fun changedInternalState() {}
 
     /**
      * An entry in the history of a [LocalHistoryRoute].

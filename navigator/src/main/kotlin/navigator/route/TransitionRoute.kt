@@ -10,7 +10,7 @@ import navigator.Route
 /**
  * A route with entrance and exit transitions.
  */
-abstract class TransitionRoute<T> : OverlayRoute<T>() {
+interface TransitionRoute<T> : OverlayRoute<T> {
 
     /**
      * Whether the route obscures previous routes when the transition is complete.
@@ -18,7 +18,7 @@ abstract class TransitionRoute<T> : OverlayRoute<T>() {
      * When an opaque route's entrance transition is complete, the routes behind the opaque route
      * will not be built to save resources.
      */
-    abstract val opaque: Boolean
+    val opaque: Boolean
 
     /**
      * This future completes only once the transition itself has finished, after the overlay entries
@@ -27,15 +27,71 @@ abstract class TransitionRoute<T> : OverlayRoute<T>() {
      * This future completes once the animation has been dismissed. That will be after [popped],
      * because [popped] completes before the animation even starts, as soon as the route is popped.
      */
-    val completed: CompletableDeferred<T> = CompletableDeferred()
+    val completed: CompletableDeferred<T>
 
-    private var result: T? = null
+    var result: T?
+    var animatorIn: Animator
+    var animatorOut: Animator
 
-    private val animatorIn: Animator by lazy { createAnimatorIn() }
+    /**
+     * Called to create the animator that will drive the transitions to this route from the previous
+     * one.
+     */
+    fun createAnimatorIn(): Animator {
+        return AnimatorSet()
+    }
 
-    private val animatorOut: Animator by lazy { createAnimatorOut() }
+    /**
+     * Called to create the animator that will drive the transitions from this route to the previous
+     * one.
+     */
+    fun createAnimatorOut(): Animator {
+        return AnimatorSet()
+    }
 
-    private val animatorListener = object : AnimatorListener {
+    /**
+     * Whether this route can perform a transition to the given route.
+     *
+     * Subclasses can override this method to restrict the set of routes they need to coordinate
+     * transitions with.
+     */
+    fun canTransitionTo(nextRoute: TransitionRoute<*>) = true
+
+    /**
+     * Whether this route can perform a transition from the given route.
+     *
+     * Subclasses can override this method to restrict the set of routes they need to coordinate
+     * transitions with.
+     */
+    fun canTransitionFrom(previousRoute: TransitionRoute<*>) = true
+
+    override fun didPush(): Deferred<Unit> {
+        animatorIn.addListener(createAnimatorListener())
+        animatorIn.start()
+        return CompletableDeferred()
+    }
+
+    override fun didReplace(oldRoute: Route<*>?) {
+        if (oldRoute is TransitionRoute<*>) {
+        }
+        animatorIn.addListener(createAnimatorListener())
+        super.didReplace(oldRoute)
+    }
+
+    override fun didPop(result: Any?): Boolean {
+        this.result = result as T
+        animatorIn.cancel()
+        animatorOut.start()
+        return super.didPop(result)
+    }
+
+    override fun dispose() {
+        animatorIn.end()
+        animatorOut.end()
+        completed.complete(result!!)
+    }
+
+    private fun createAnimatorListener() = object : AnimatorListener {
 
         override fun onAnimationRepeat(animator: Animator) {
         }
@@ -60,64 +116,6 @@ abstract class TransitionRoute<T> : OverlayRoute<T>() {
             }
         }
 
-    }
-
-    /**
-     * Called to create the animator that will drive the transitions to this route from the previous
-     * one.
-     */
-    open fun createAnimatorIn(): Animator {
-        return AnimatorSet()
-    }
-
-    /**
-     * Called to create the animator that will drive the transitions from this route to the previous
-     * one.
-     */
-    open fun createAnimatorOut(): Animator {
-        return AnimatorSet()
-    }
-
-    /**
-     * Whether this route can perform a transition to the given route.
-     *
-     * Subclasses can override this method to restrict the set of routes they need to coordinate
-     * transitions with.
-     */
-    open fun canTransitionTo(nextRoute: TransitionRoute<*>) = true
-
-    /**
-     * Whether this route can perform a transition from the given route.
-     *
-     * Subclasses can override this method to restrict the set of routes they need to coordinate
-     * transitions with.
-     */
-    open fun canTransitionFrom(previousRoute: TransitionRoute<*>) = true
-
-    override fun didPush(): Deferred<Unit> {
-        animatorIn.addListener(animatorListener)
-        animatorIn.start()
-        return CompletableDeferred()
-    }
-
-    override fun didReplace(oldRoute: Route<*>?) {
-        if (oldRoute is TransitionRoute<*>) {
-        }
-        animatorIn.addListener(animatorListener)
-        super.didReplace(oldRoute)
-    }
-
-    override fun didPop(result: Any?): Boolean {
-        this.result = result as T
-        animatorIn.cancel()
-        animatorOut.start()
-        return super.didPop(result)
-    }
-
-    override fun dispose() {
-        animatorIn.end()
-        animatorOut.end()
-        completed.complete(result!!)
     }
 
 }

@@ -1,9 +1,11 @@
 package navigator.route
 
-import navigator.Route
+interface PopupRoute<T> : ModalRoute<T> {
 
-abstract class PopupRoute<T>(settings: Route.Settings) : ModalRoute<T>(settings) {
+    override val opaque: Boolean
+        get() {
+            return false
+        }
 
-    override val opaque: Boolean = false
 
 }

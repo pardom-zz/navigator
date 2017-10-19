@@ -4,26 +4,26 @@ import navigator.Overlay
 import navigator.Route
 
 /**
- * A route that displays widgets in the [Navigator]'s [Overlay].
+ * A route that displays widgets in the [navigator.Navigator]'s [Overlay].
  */
-abstract class OverlayRoute<T> : Route<T>() {
+interface OverlayRoute<T> : Route<T> {
 
     /**
      * Subclasses should override this getter to return the builders for the overlay.
      */
-    abstract fun createOverlayEntries(): Collection<Overlay.Entry>
+    fun createOverlayEntries(): Collection<Overlay.Entry>
 
     /**
-     * Controls whether [didPop] calls [Navigator.finalizeRoute].
+     * Controls whether [didPop] calls [navigator.Navigator.finalizeRoute].
      *
      * If true, this route removes its overlay entries during [didPop]. Subclasses can override this
      * getter if they want to delay finalization (for example to animate the route's exit before
      * removing it from the overlay).
      *
      * Subclasses that return false from [finishedWhenPopped] are responsible for calling
-     * [Navigator.finalizeRoute] themselves.
+     * [navigator.Navigator.finalizeRoute] themselves.
      */
-    open val finishedWhenPopped: Boolean = true
+    val finishedWhenPopped: Boolean
 
     override fun install(insertionPoint: Overlay.Entry?) {
         assert(overlayEntries.isEmpty())
