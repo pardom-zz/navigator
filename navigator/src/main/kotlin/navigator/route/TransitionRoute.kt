@@ -30,8 +30,8 @@ interface TransitionRoute<T> : OverlayRoute<T> {
     val completed: CompletableDeferred<T>
 
     var result: T?
-    var animatorIn: Animator
-    var animatorOut: Animator
+    val animatorIn: Animator
+    val animatorOut: Animator
 
     /**
      * Called to create the animator that will drive the transitions to this route from the previous

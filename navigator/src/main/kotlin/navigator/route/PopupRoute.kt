@@ -7,5 +7,4 @@ interface PopupRoute<T> : ModalRoute<T> {
             return false
         }
 
-
 }

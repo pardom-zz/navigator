@@ -24,6 +24,7 @@ interface OverlayRoute<T> : Route<T> {
      * [navigator.Navigator.finalizeRoute] themselves.
      */
     val finishedWhenPopped: Boolean
+        get() = false
 
     override fun install(insertionPoint: Overlay.Entry?) {
         assert(overlayEntries.isEmpty())
@@ -47,5 +48,6 @@ interface OverlayRoute<T> : Route<T> {
         overlayEntries.clear()
         super.dispose()
     }
+
 
 }
